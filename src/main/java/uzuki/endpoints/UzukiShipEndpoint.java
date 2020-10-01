@@ -1,6 +1,7 @@
 package uzuki.endpoints;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import uzuki.UzukiServer;
 import uzuki.struct.UzukiEndpointContext;
@@ -14,6 +15,24 @@ public class UzukiShipEndpoint {
     private UzukiServer uzuki;
 
     public UzukiShipEndpoint(UzukiServer uzuki) { this.uzuki = uzuki; }
+
+    public void shipClass(UzukiEndpointContext uzukiContext) {
+        List<UzukiShip> data = this.uzuki.uzukiCache.ships.stream()
+                .filter(ship -> ship.shipClass.toLowerCase().equals(uzukiContext.queryString.toLowerCase()))
+                .collect(Collectors.toList());
+        JsonArray json = new JsonArray();
+        for (UzukiShip obj : data) json.add(obj.data);
+        uzukiContext.response.end(json.toString());
+    }
+
+    public void id(UzukiEndpointContext uzukiContext) {
+        List<UzukiShip> data = this.uzuki.uzukiCache.ships.stream()
+                .filter(ship -> ship.id.equals(uzukiContext.queryString))
+                .collect(Collectors.toList());
+        JsonObject json = new JsonObject();
+        if (!data.isEmpty()) json = data.get(0).data;
+        uzukiContext.response.end(json.toString());
+    }
 
     public void search(UzukiEndpointContext uzukiContext) {
         List<UzukiShip> data = this.uzuki.uzukiCache.ships.stream()

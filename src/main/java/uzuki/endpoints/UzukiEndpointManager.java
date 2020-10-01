@@ -11,7 +11,7 @@ import uzuki.struct.UzukiEndpointContext;
 public class UzukiEndpointManager {
     private final UzukiServer uzuki;
     private final UzukiShipEndpoint uzukiShipEndpoint;
-    public final Logger logger;
+    private final Logger logger;
 
     public UzukiEndpointManager(UzukiServer uzuki) {
         this.uzuki = uzuki;
@@ -41,10 +41,12 @@ public class UzukiEndpointManager {
                 context.fail(401);
                 return;
             }
-            if (this.uzuki.uzukiStore.needsUpdate()) {
-                this.uzuki.uzukiStore.updateLocalData();
-                this.uzuki.uzukiCache.updateShipCache(this.uzuki.uzukiStore.getLocalShipsData());
+            if (!this.uzuki.uzukiStore.needsUpdate()) {
+                response.end();
+                return;
             }
+            this.uzuki.uzukiStore.updateLocalData();
+            this.uzuki.uzukiCache.updateShipCache(this.uzuki.uzukiStore.getLocalShipsData());
             response.end();
         } catch (Throwable throwable) {
             context.fail(throwable);
@@ -68,10 +70,15 @@ public class UzukiEndpointManager {
         }
         response.putHeader("content-type", "application/json; charset=utf-8");
         UzukiEndpointContext uzukiContext = new UzukiEndpointContext(context, request, response, query);
-        // in dev
         switch(endpoint) {
             case "/ship/search":
                 this.uzukiShipEndpoint.search(uzukiContext);
+                break;
+            case "/ship/id":
+                this.uzukiShipEndpoint.id(uzukiContext);
+                break;
+            case "/ship/class":
+                this.uzukiShipEndpoint.shipClass(uzukiContext);
                 break;
             default:
                 this.logger.warn("Unknown endpoint: " + endpoint);

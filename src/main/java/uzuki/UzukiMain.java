@@ -9,6 +9,7 @@ public class UzukiMain {
         System.setProperty("vertx.disableDnsResolver", "true");
         new UzukiServer()
                 .buildRest()
-                .startServer();
+                .startServer()
+                .scheduleTasks();
     }
 }
