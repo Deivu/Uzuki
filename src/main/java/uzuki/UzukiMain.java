@@ -8,6 +8,7 @@ public class UzukiMain {
     public static void main(String[] args) throws IOException, URISyntaxException, ExecutionException, InterruptedException {
         System.setProperty("vertx.disableDnsResolver", "true");
         new UzukiServer()
+                .buildRest()
                 .startServer();
     }
 }
