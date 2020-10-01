@@ -18,7 +18,7 @@ public class UzukiStore {
 
     public UzukiStore(UzukiServer uzuki) {
         this.uzuki = uzuki;
-        this.files = new String[]{"version.json", "ships.json"};
+        this.files = new String[]{"version.json", "ships.json", "misc.json"};
         this.dataDirectory = this.uzuki.uzukiConfig.directory + "data/";
         if (!this.getFileSystem().existsBlocking(this.dataDirectory)) {
             this.getFileSystem().mkdirBlocking(this.dataDirectory);
@@ -36,8 +36,15 @@ public class UzukiStore {
 
     public String getShipDataFileName() { return this.files[1]; }
 
+    public String getMiscDataFileName() { return this.files[2]; }
+
     public JsonObject getLocalShipsData() {
         Buffer buffer = this.getFileSystem().readFileBlocking(this.dataDirectory + this.getShipDataFileName());
+        return new Gson().fromJson(buffer.toString(StandardCharsets.UTF_8.name()), JsonObject.class);
+    }
+
+    public JsonObject getLocalMiscData() {
+        Buffer buffer = this.getFileSystem().readFileBlocking(this.dataDirectory + this.getMiscDataFileName());
         return new Gson().fromJson(buffer.toString(StandardCharsets.UTF_8.name()), JsonObject.class);
     }
 
@@ -56,10 +63,13 @@ public class UzukiStore {
 
     public void updateLocalData() throws ExecutionException, InterruptedException {
         JsonObject remoteShips = this.uzuki.uzukiRest.getRemoteShips().get();
+        JsonObject remoteMisc = this.uzuki.uzukiRest.getRemoteMisc().get();
         JsonObject remoteVersion = new JsonObject();
         remoteVersion.addProperty("version", this.uzuki.uzukiRest.getRemoteVersion().get());
         this.getFileSystem()
                 .writeFileBlocking(this.dataDirectory + this.getShipDataFileName(), Buffer.buffer(remoteShips.toString()));
+        this.getFileSystem()
+                .writeFileBlocking(this.dataDirectory + this.getMiscDataFileName(), Buffer.buffer(remoteMisc.toString()));
         this.getFileSystem()
                 .writeFileBlocking(this.dataDirectory + this.getVersionFileName(), Buffer.buffer(remoteVersion.toString()));
     }

@@ -44,7 +44,7 @@ public class UzukiServer {
         this.vertx = Vertx.vertx(new VertxOptions().setWorkerPoolSize(this.uzukiConfig.threads));
         this.uzukiRest = new UzukiRest(this);
         this.uzukiStore = new UzukiStore(this);
-        this.uzukiCache = new UzukiCache();
+        this.uzukiCache = new UzukiCache(this);
         this.uzukiEndpointManager = new UzukiEndpointManager(this);
         this.singleThreadScheduler = Executors.newSingleThreadScheduledExecutor();
         this.server = this.vertx.createHttpServer();
@@ -64,7 +64,7 @@ public class UzukiServer {
                 .failureHandler(this.uzukiEndpointManager::executeFail)
                 .enable();
         apiRoutes.route("/*")
-                .handler(StaticHandler.create().setIndexPage("hiei.html"))
+                .handler(StaticHandler.create().setIndexPage("uzuki.html"))
                 .failureHandler(this.uzukiEndpointManager::executeFail)
                 .enable();
         mainRouter.mountSubRouter(this.uzukiConfig.routePrefix, apiRoutes);
@@ -72,8 +72,12 @@ public class UzukiServer {
     }
 
     public UzukiServer startServer() throws ExecutionException, InterruptedException {
-        if (this.uzukiStore.needsUpdate()) this.uzukiStore.updateLocalData();
-        this.uzukiCache.updateShipCache(this.uzukiStore.getLocalShipsData());
+        if (!this.uzukiStore.needsUpdate()) {
+            this.uzukiCache.updateMiscCache(this.uzukiStore.getLocalMiscData());
+            this.uzukiCache.updateShipCache(this.uzukiStore.getLocalShipsData());
+        } else {
+            this.updateData();
+        }
         server.requestHandler(this.mainRouter).listen(this.uzukiConfig.port);
         return this;
     }
@@ -83,11 +87,16 @@ public class UzukiServer {
         this.singleThreadScheduler.scheduleAtFixedRate(this::executeTasks, this.uzukiConfig.checkUpdateInterval, this.uzukiConfig.checkUpdateInterval, TimeUnit.HOURS);
     }
 
+    public void updateData() throws ExecutionException, InterruptedException {
+        this.uzukiStore.updateLocalData();
+        this.uzukiCache.updateMiscCache(this.uzukiStore.getLocalMiscData());
+        this.uzukiCache.updateShipCache(this.uzukiStore.getLocalShipsData());
+    }
+
     private void executeTasks() {
         try {
             if (!this.uzukiStore.needsUpdate()) return;
-            this.uzukiStore.updateLocalData();
-            this.uzukiCache.updateShipCache(this.uzukiStore.getLocalShipsData());
+            this.updateData();
         } catch (Throwable throwable) {
             this.logger.error(throwable.toString(), throwable);
         }

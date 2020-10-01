@@ -45,8 +45,7 @@ public class UzukiEndpointManager {
                 response.end();
                 return;
             }
-            this.uzuki.uzukiStore.updateLocalData();
-            this.uzuki.uzukiCache.updateShipCache(this.uzuki.uzukiStore.getLocalShipsData());
+            this.uzuki.updateData();
             response.end();
         } catch (Throwable throwable) {
             context.fail(throwable);

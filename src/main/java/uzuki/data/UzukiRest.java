@@ -15,11 +15,13 @@ public class UzukiRest {
     private final WebClient client;
     private final String remoteVersionSource;
     private final String remoteShipSource;
+    private final String remoteMiscSource;
 
     public UzukiRest(UzukiServer uzuki) {
         this.client = WebClient.create(uzuki.vertx, new WebClientOptions().setUserAgent("Uzuki/dev"));
         this.remoteVersionSource = "https://raw.githubusercontent.com/kcwiki/kancolle-data/master/package.json";
         this.remoteShipSource = "https://raw.githubusercontent.com/kcwiki/kancolle-data/master/wiki/ship.json";
+        this.remoteMiscSource = "https://raw.githubusercontent.com/kcwiki/kancolle-data/master/wiki/misc.json";
     }
 
     public CompletableFuture<String> getRemoteVersion() {
@@ -46,6 +48,22 @@ public class UzukiRest {
                     if (response.failed()) {
                         Throwable throwable = response.cause();
                         if (throwable == null) throwable = new Throwable("Can't fetch remote ship data");
+                        result.completeExceptionally(throwable);
+                        return;
+                    }
+                    Gson gson = new Gson();
+                    result.complete(gson.fromJson(response.result().bodyAsString(StandardCharsets.UTF_8.name()), JsonObject.class));
+                });
+        return result;
+    }
+
+    public CompletableFuture<JsonObject> getRemoteMisc() {
+        CompletableFuture<JsonObject> result = new CompletableFuture<>();
+        this.client.requestAbs(HttpMethod.GET, this.remoteMiscSource)
+                .send(response -> {
+                    if (response.failed()) {
+                        Throwable throwable = response.cause();
+                        if (throwable == null) throwable = new Throwable("Can't fetch remote misc data");
                         result.completeExceptionally(throwable);
                         return;
                     }
