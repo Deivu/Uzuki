@@ -37,6 +37,7 @@ Ping or ask for @Sāya#0113
 > Run the server by doing `java -jar uzuki.jar`
 
 ## Rest Client Example
+> Node.JS (Javascript)
 ```js 
 const Fetch = require('node-fetch');
 
