@@ -28,7 +28,7 @@ The ShipGirl Project, Uzuki; `(c) Kancolle`
 
 Ping or ask for @Sāya#0113
 
-## how to host
+## How to host
 
 > Download the latest version from [Github Releases](https://github.com/Deivu/Uzuki/releases)
 
