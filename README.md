@@ -32,7 +32,7 @@ Ping or ask for @Sāya#0113
 
 > Download the latest version from [Github Releases](https://github.com/Deivu/Uzuki/releases)
 
-> Copy a config from [examples]() folder
+> Copy a config from [examples](https://github.com/Deivu/Uzuki/tree/master/example) folder
 
 > Run the server by doing `java -jar uzuki.jar`
 
