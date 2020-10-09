@@ -41,12 +41,15 @@ public class UzukiEndpointManager {
                 context.fail(401);
                 return;
             }
-            if (!this.uzuki.uzukiStore.needsUpdate()) {
-                response.end();
-                return;
+            this.logger.info("Manual data update check authorized at /update endpoint, checking...");
+            if (this.uzuki.uzukiStore.needsUpdate()) {
+                this.logger.info("Data update available, updating...");
+                this.uzuki.updateData();
+            } else {
+                this.logger.info("Data up-to-date!");
             }
-            this.uzuki.updateData();
             response.end();
+            this.logger.info("Manual data update check done!");
         } catch (Throwable throwable) {
             context.fail(throwable);
         }
