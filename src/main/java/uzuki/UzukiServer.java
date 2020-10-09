@@ -72,19 +72,27 @@ public class UzukiServer {
     }
 
     public UzukiServer startServer() throws ExecutionException, InterruptedException {
+        this.logger.info("Pre-start server checks initializing....");
         if (!this.uzukiStore.needsUpdate()) {
+            this.logger.info("Data up-to-date!, loading from cache....");
             this.uzukiCache.updateMiscCache(this.uzukiStore.getLocalMiscData());
             this.uzukiCache.updateShipCache(this.uzukiStore.getLocalShipsData());
         } else {
+            this.logger.info("Data update available, updating...");
             this.updateData();
         }
         server.requestHandler(this.mainRouter).listen(this.uzukiConfig.port);
+        this.logger.info("Mutsuki class fourth ship, Uzuki is ready! Awaiting orders at port: " + this.uzukiConfig.port);
         return this;
     }
 
     public void scheduleTasks() {
-        if (this.uzukiConfig.checkUpdateInterval == 0) return;
+        if (this.uzukiConfig.checkUpdateInterval == 0) {
+            this.logger.info("Automatic update check is disabled, you need to update the data periodically yourself");
+            return;
+        }
         this.singleThreadScheduler.scheduleAtFixedRate(this::executeTasks, this.uzukiConfig.checkUpdateInterval, this.uzukiConfig.checkUpdateInterval, TimeUnit.HOURS);
+        this.logger.info("Automatic update check is now set. Set to run every " + this.uzukiConfig.checkUpdateInterval + " hour(s)");
     }
 
     public void updateData() throws ExecutionException, InterruptedException {
@@ -95,8 +103,11 @@ public class UzukiServer {
 
     private void executeTasks() {
         try {
+            this.logger.info("Automatic update check starting...");
             if (!this.uzukiStore.needsUpdate()) return;
+            this.logger.info("Data update available, updating...");
             this.updateData();
+            this.logger.info("Automatic update check executed!");
         } catch (Throwable throwable) {
             this.logger.error(throwable.toString(), throwable);
         }
