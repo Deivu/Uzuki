@@ -18,7 +18,7 @@ public class UzukiRest {
     private final String remoteMiscSource;
 
     public UzukiRest(UzukiServer uzuki) {
-        this.client = WebClient.create(uzuki.vertx, new WebClientOptions().setUserAgent("Uzuki/dev"));
+        this.client = WebClient.create(uzuki.vertx, new WebClientOptions().setUserAgent("Uzuki/" + uzuki.version));
         this.remoteVersionSource = "https://raw.githubusercontent.com/kcwiki/kancolle-data/master/package.json";
         this.remoteShipSource = "https://raw.githubusercontent.com/kcwiki/kancolle-data/master/wiki/ship.json";
         this.remoteMiscSource = "https://raw.githubusercontent.com/kcwiki/kancolle-data/master/wiki/misc.json";
