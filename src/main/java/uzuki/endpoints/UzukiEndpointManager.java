@@ -66,6 +66,10 @@ public class UzukiEndpointManager {
         }
         String query = request.getParam("q");
         if (query == null) {
+            if (endpoint.equals("/ship/random")) {
+                this.uzukiShipEndpoint.random(new UzukiEndpointContext(context, request, response));
+                return;
+            }
             response.setStatusMessage("Bad Request");
             context.fail(400);
             return;
@@ -75,9 +79,6 @@ public class UzukiEndpointManager {
         switch(endpoint) {
             case "/ship/search":
                 this.uzukiShipEndpoint.search(uzukiContext);
-                break;
-            case "/ship/random":
-                this.uzukiShipEndpoint.random(uzukiContext);
                 break;
             case "/ship/id":
                 this.uzukiShipEndpoint.id(uzukiContext);

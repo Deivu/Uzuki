@@ -37,8 +37,8 @@ public class UzukiShipEndpoint {
 
     public void random(UzukiEndpointContext uzukiContext) {
         int random = new Random().nextInt(this.uzuki.uzukiCache.ships.size() - 1);
-        UzukiShip data = this.uzuki.uzukiCache.ships.get(random);
-        uzukiContext.response.end(data.toString());
+        UzukiShip obj = this.uzuki.uzukiCache.ships.get(random);
+        uzukiContext.response.end(obj.data.toString());
     }
 
     public void search(UzukiEndpointContext uzukiContext) {

@@ -16,4 +16,11 @@ public class UzukiEndpointContext {
         this.response = response;
         this.queryString = queryString;
     }
+
+    public UzukiEndpointContext(RoutingContext routingContext, HttpServerRequest request, HttpServerResponse response) {
+        this.routingContext = routingContext;
+        this.request = request;
+        this.response = response;
+        this.queryString = "Nothing";
+    }
 }
