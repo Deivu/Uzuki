@@ -50,7 +50,7 @@ public class UzukiServer {
         this.server = this.vertx.createHttpServer();
         this.mainRouter = Router.router(vertx);
         this.apiRoutes = Router.router(vertx);
-        this.getEndpoints = new String[] { "/ship/search", "/ship/id", "/ship/class"  };
+        this.getEndpoints = new String[] { "/ship/search",  "/ship/random", "/ship/id", "/ship/class"  };
     }
 
     public UzukiServer buildRest() {

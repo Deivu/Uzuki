@@ -1,8 +1,6 @@
 package uzuki.data;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.file.FileSystem;

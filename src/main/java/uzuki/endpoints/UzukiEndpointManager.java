@@ -76,6 +76,9 @@ public class UzukiEndpointManager {
             case "/ship/search":
                 this.uzukiShipEndpoint.search(uzukiContext);
                 break;
+            case "/ship/random":
+                this.uzukiShipEndpoint.random(uzukiContext);
+                break;
             case "/ship/id":
                 this.uzukiShipEndpoint.id(uzukiContext);
                 break;

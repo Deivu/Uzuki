@@ -9,6 +9,7 @@ import uzuki.struct.UzukiSearchResult;
 import uzuki.struct.UzukiShip;
 
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class UzukiShipEndpoint {
@@ -32,6 +33,12 @@ public class UzukiShipEndpoint {
         JsonObject json = new JsonObject();
         if (!data.isEmpty()) json = data.get(0).data;
         uzukiContext.response.end(json.toString());
+    }
+
+    public void random(UzukiEndpointContext uzukiContext) {
+        int random = new Random().nextInt(this.uzuki.uzukiCache.ships.size() - 1);
+        UzukiShip data = this.uzuki.uzukiCache.ships.get(random);
+        uzukiContext.response.end(data.toString());
     }
 
     public void search(UzukiEndpointContext uzukiContext) {
